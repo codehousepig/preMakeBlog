@@ -1,11 +1,18 @@
 package codehouse.premakeblog.Service;
 
 import codehouse.premakeblog.dto.ChunuDTO;
+import codehouse.premakeblog.dto.PageRequestDTO;
+import codehouse.premakeblog.dto.PageResultDTO;
 import codehouse.premakeblog.entity.Chunu;
 import codehouse.premakeblog.repository.ChunuRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.function.Function;
 
 @Service
 @Log4j2
@@ -23,5 +30,14 @@ public class ChunuServiceImpl implements ChunuService{
 
         repository.save(entity); // 테스트 후에 추가
         return entity.getCno(); // 테스트 후에 추가
+    }
+
+    @Override
+    public PageResultDTO<ChunuDTO, Chunu> getList(PageRequestDTO requestDTO) {
+        Pageable pageable = requestDTO.getPageable(Sort.by("cno").descending());
+        Page<Chunu> result = repository.findAll(pageable);
+        Function<Chunu, ChunuDTO> fn = (entity -> entityToDto(entity));
+
+        return new PageResultDTO<>(result, fn);
     }
 }
