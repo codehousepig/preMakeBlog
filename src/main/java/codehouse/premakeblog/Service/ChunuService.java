@@ -27,6 +27,7 @@ public interface ChunuService {
                 .title(entity.getTitle())
                 .content(entity.getContent())
                 .writer(entity.getWriter())
+                .regDate(entity.getRegDate())
                 .build();
 
         return dto;

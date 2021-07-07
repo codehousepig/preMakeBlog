@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+	<th:block th:replace="~{/layout/index :: setContent(~{this::content})}">
+		<th:block th:fragment="content">
+			<h1>preMakeBlog Page</h1>
+
+			<table class="table table-striped">
+				<thead>
+				<tr>
+					<th scope="col">#</th>
+					<th scope="col">Cno</th>
+					<th scope="col">Title</th>
+					<th scope="col">Regdate</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr th:each="dto : ${result.dtoList}">
+					<th scope="row">[[${dto.cno}]]</th>
+					<td> [[${dto.title}]]</td>
+					<td> [[${dto.writer}]]</td>
+					<td> [[${#temporals.format(dto.regDate, 'yyyy/MM/dd')}]]</td>
+				</tr>
+				</tbody>
+			</table>
+			<ul class="pagination h-100 justify-content-center align-items-center">
+				<li class="page-item" th:if="${result.prev}">
+					<a class="page-link" th:href="@{/chunu/list(page= ${result.start-1})}" tabindex="-1">Previous</a>
+				</li>
+				<li th:class=" 'page-item ' + ${result.page == page ? 'active' : ''}" th:each="page: ${result.pageList}">
+					<a class="page-link" th:href="@{/chunu/list(page= ${page})}">[[ ${page} ]]</a>
+				</li>
+				<li class="page-item" th:if="${result.next}">
+					<a class="page-link" th:href="@{chunu/list(page= ${result.end+1})}">Next</a>
+				</li>
+			</ul>
+		</th:block>
+	</th:block>
+</body>
+</html>
