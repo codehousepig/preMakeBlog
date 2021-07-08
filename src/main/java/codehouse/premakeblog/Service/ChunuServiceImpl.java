@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 @Service
@@ -30,6 +31,12 @@ public class ChunuServiceImpl implements ChunuService{
 
         repository.save(entity); // 테스트 후에 추가
         return entity.getCno(); // 테스트 후에 추가
+    }
+
+    @Override
+    public ChunuDTO read(Long cno) {
+        Optional<Chunu> result = repository.findById(cno);
+        return result.isPresent() ? entityToDto(result.get()) : null;
     }
 
     @Override

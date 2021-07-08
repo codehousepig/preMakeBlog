@@ -8,6 +8,8 @@ import codehouse.premakeblog.entity.Chunu;
 public interface ChunuService {
     Long register(ChunuDTO dto);
 
+    ChunuDTO read(Long cno);
+
     PageResultDTO<ChunuDTO, Chunu> getList(PageRequestDTO requestDTO);
 
     default Chunu dtoToEntity(ChunuDTO dto) {
@@ -28,6 +30,7 @@ public interface ChunuService {
                 .content(entity.getContent())
                 .writer(entity.getWriter())
                 .regDate(entity.getRegDate())
+                .modDate(entity.getModDate())
                 .build();
 
         return dto;

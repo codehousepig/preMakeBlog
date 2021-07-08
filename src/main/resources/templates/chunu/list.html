@@ -7,7 +7,14 @@
 <body>
 	<th:block th:replace="~{/layout/index :: setContent(~{this::content})}">
 		<th:block th:fragment="content">
-			<h1>preMakeBlog Page</h1>
+			<h1>preMakeBlog Page
+				<span>
+					<a th:href="@{/chunu/register}">
+						<button type="button" class="btn btn-outline-primary">REGISTER
+						</button>
+					</a>
+				</span>
+			</h1>
 
 			<table class="table table-striped">
 				<thead>
@@ -20,7 +27,11 @@
 				</thead>
 				<tbody>
 				<tr th:each="dto : ${result.dtoList}">
-					<th scope="row">[[${dto.cno}]]</th>
+					<th scope="row">
+						<a th:href="@{/chunu/read(cno= ${dto.cno}, page= ${result.page})}">
+							[[${dto.cno}]]
+						</a>
+					</th>
 					<td> [[${dto.title}]]</td>
 					<td> [[${dto.writer}]]</td>
 					<td> [[${#temporals.format(dto.regDate, 'yyyy/MM/dd')}]]</td>
@@ -40,5 +51,35 @@
 			</ul>
 		</th:block>
 	</th:block>
+
+	<!-- 모달창 코드-->
+	<div class="modal" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Modal title</h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<p>Modal body text goes here.</p>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary">Save Changes</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script th:inline="javascript">
+		var msg = [[ ${msg} ]]
+		console.log(msg)
+
+		if (msg) {
+			$(".modal").modal();
+		}
+	</script>
 </body>
 </html>
