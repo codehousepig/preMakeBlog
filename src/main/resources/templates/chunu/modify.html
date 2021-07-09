@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+<th:block th:replace="~{/layout/index :: setContent(~{this::content})}">
+	<th:block th:fragment="content">
+		<h1 class="mt-4">preMakeBlog Modify Page</h1>
+		<form action="/chunu/modify" method="post">
+
+			<!-- 페이지 번호 -->
+			<input type="hidden" name="page" th:value="${requestDTO.page}">
+
+			<div class="form-group">
+				<label >Cno</label>
+				<input type="text" class="form-control" name="cno" th:value="${dto.cno}" readonly>
+			</div>
+			<div class="form-group">
+				<label >Title</label>
+				<input type="text" class="form-control" name="title" th:value="${dto.title}">
+			</div>
+			<div class="form-group">
+				<label >Content</label>
+				<textarea class="form-control" rows="5" name="content"> [[ ${dto.content} ]] </textarea>
+			</div>
+			<div class="form-group">
+				<label >Writer</label>
+				<input type="text" class="form-control" name="writer" th:value="${dto.writer}" readonly>
+			</div>
+			<div>
+				<label >ModDate</label>
+				<input type="text" class="form-control" name="modDate" th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
+			</div>
+		</form>
+
+		<button type="button" class="btn btn-primary btn_modify">Modify</button>
+		<button type="button" class="btn btn-info btn_list">List</button>
+		<button type="button" class="btn btn-danger btn_remove">Remove</button>
+
+		<script th:inline="javascript">
+			var actionForm = $("form"); // form 태그 객체
+			$(".btn_remove").click(
+					function () {
+						actionForm
+								.attr("action", "/chunu/remove")
+								.attr("method", "post");
+						actionForm.submit();
+					}
+			);
+
+			$(".btn_modify").click(
+					function () {
+						if(!confirm("수정하시겠습니까?")){
+							return;
+						}
+						actionForm
+								.attr("action", "/chunu/modify")
+								.attr("method", "post")
+								.submit();
+					}
+			);
+			$(".btn_list").click(
+					function () {
+						var pageInfo = $("input[name='page']");
+						actionForm.empty(); // form 태그의 모든 내용을 지우고
+						actionForm.append(pageInfo); // 목록 페이지 이동에 필요한 내용을 다시 추가
+
+						actionForm
+								.attr("action", "/chunu/list")
+								.attr("method", "get");
+
+						console.log(actionForm.html()); // 확인후 주석 해제
+						actionForm.submit(); // 확인후 주석 해제
+					}
+			);
+		</script>
+	</th:block>
+</th:block>
+</body>
+</html>

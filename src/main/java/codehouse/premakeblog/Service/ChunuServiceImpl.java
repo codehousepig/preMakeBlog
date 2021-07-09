@@ -22,6 +22,7 @@ public class ChunuServiceImpl implements ChunuService{
 
     private final ChunuRepository repository; // 테스트 후에 추가
 
+    @Override
     public Long register(ChunuDTO dto) {
         log.info("input dto.............");
         log.info(dto);
@@ -31,6 +32,24 @@ public class ChunuServiceImpl implements ChunuService{
 
         repository.save(entity); // 테스트 후에 추가
         return entity.getCno(); // 테스트 후에 추가
+    }
+
+    @Override
+    public void remove(Long cno) {
+        repository.deleteById(cno);
+    }
+
+    @Override
+    public void modify(ChunuDTO dto) {
+        // 수정하는 내용은 제목, 내용
+        Optional<Chunu> result = repository.findById(dto.getCno());
+        if (result.isPresent()) {
+            Chunu entity = result.get();
+            entity.changeTitle(dto.getTitle());
+            entity.changeContent(dto.getContent());
+
+            repository.save(entity);
+        }
     }
 
     @Override

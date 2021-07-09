@@ -49,10 +49,33 @@ public class chunuController {
         return "redirect:/chunu/list";
     }
 
-    @GetMapping("/read")
+    // @GetMapping("/read")
+    @GetMapping({"/read", "/modify"})
     public void read(Long cno, @ModelAttribute("requestDTO") PageRequestDTO requestDTO, Model model){
         log.info("cno: Read..." + cno);
         ChunuDTO dto = service.read(cno);
         model.addAttribute("dto", dto);
+    }
+
+    @PostMapping("/remove")
+    public String remove(Long cno, RedirectAttributes redirectAttributes){
+        log.info("Remove cno: ..." + cno);
+        service.remove(cno);
+        redirectAttributes.addFlashAttribute("msg", cno);
+
+        return "redirect:/chunu/list";
+    }
+
+    @PostMapping("/modify")
+    public String modify(ChunuDTO dto, RedirectAttributes redirectAttributes,
+                         @ModelAttribute("requestDTO") PageRequestDTO requestDTO){
+        log.info("modify Post: .....");
+        log.info("dto: " + dto);
+
+        service.modify(dto);
+
+        redirectAttributes.addAttribute("page", requestDTO.getPage());
+        redirectAttributes.addAttribute("cno", dto.getCno());
+        return "redirect:/chunu/read";
     }
 }

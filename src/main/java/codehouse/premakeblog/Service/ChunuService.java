@@ -10,6 +10,10 @@ public interface ChunuService {
 
     ChunuDTO read(Long cno);
 
+    void remove(Long cno);
+
+    void modify(ChunuDTO dto);
+
     PageResultDTO<ChunuDTO, Chunu> getList(PageRequestDTO requestDTO);
 
     default Chunu dtoToEntity(ChunuDTO dto) {
