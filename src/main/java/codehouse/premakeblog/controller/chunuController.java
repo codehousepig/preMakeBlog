@@ -76,6 +76,8 @@ public class chunuController {
 
         redirectAttributes.addAttribute("page", requestDTO.getPage());
         redirectAttributes.addAttribute("cno", dto.getCno());
+        redirectAttributes.addAttribute("type", requestDTO.getType());
+        redirectAttributes.addAttribute("keyword", requestDTO.getPage());
         return "redirect:/chunu/read";
     }
 }
