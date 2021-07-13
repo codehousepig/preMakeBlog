@@ -17,6 +17,30 @@ public class ChunuServiceTest {
     private ChunuService service;
 
     @Test
+    public void removeTest() {
+        Long cno = 22L;
+        service.remove(cno);
+    }
+/*
+    @Test
+    public void readTest(){
+        Long cno = 22L;
+        ChunuDTO chunuDTO = service.read(cno);
+        System.out.println(chunuDTO);
+    }
+*/
+
+/*    @Test
+    public void listTest() {
+        PageRequestDTO requestDTO = new PageRequestDTO();
+        PageResultDTO<ChunuDTO, Object[]> result = service.getList(requestDTO);
+
+        for (ChunuDTO chunuDTO : result.getDtoList()) {
+            System.out.println(chunuDTO);
+        }
+    }*/
+
+/*    @Test
     public void listTest(){
         PageRequestDTO requestDTO = PageRequestDTO.builder().page(1).size(10).build();
         PageResultDTO<ChunuDTO, Chunu> resultDTO = service.getList(requestDTO);
@@ -32,7 +56,7 @@ public class ChunuServiceTest {
         System.out.println("=============");
 
         resultDTO.getPageList().forEach(i -> System.out.println(i));
-    }
+    }*/
 
 /*    @Test
     public void registerTest() {

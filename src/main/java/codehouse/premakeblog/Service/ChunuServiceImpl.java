@@ -6,6 +6,7 @@ import codehouse.premakeblog.dto.PageResultDTO;
 import codehouse.premakeblog.entity.Chunu;
 import codehouse.premakeblog.entity.QChunu;
 import codehouse.premakeblog.repository.ChunuRepository;
+import codehouse.premakeblog.repository.ReplyRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -24,6 +27,7 @@ import java.util.function.Function;
 public class ChunuServiceImpl implements ChunuService{
 
     private final ChunuRepository repository; // 테스트 후에 추가
+    private final ReplyRepository replyRepository;
 
     @Override
     public Long register(ChunuDTO dto) {
@@ -37,22 +41,22 @@ public class ChunuServiceImpl implements ChunuService{
         return entity.getCno(); // 테스트 후에 추가
     }
 
+    @Transactional // 트랜잭션 추가
     @Override
     public void remove(Long cno) {
+        replyRepository.deleteByCno(cno); // 댓글 부터 삭제
         repository.deleteById(cno);
     }
 
     @Override
-    public void modify(ChunuDTO dto) {
-        // 수정하는 내용은 제목, 내용
-        Optional<Chunu> result = repository.findById(dto.getCno());
-        if (result.isPresent()) {
-            Chunu entity = result.get();
-            entity.changeTitle(dto.getTitle());
-            entity.changeContent(dto.getContent());
+    public void modify(ChunuDTO dto) { // 수정하는 내용은 제목, 내용
+    //        Optional<Chunu> result = repository.findById(dto.getCno());
+        Chunu chunu = repository.getOne(dto.getCno());
 
-            repository.save(entity);
-        }
+        chunu.changeTitle(dto.getTitle());
+        chunu.changeContent(dto.getContent());
+
+        repository.save(chunu);
     }
 
     // 검색 처리 추가
@@ -88,17 +92,22 @@ public class ChunuServiceImpl implements ChunuService{
 
     @Override
     public ChunuDTO read(Long cno) {
-        Optional<Chunu> result = repository.findById(cno);
-        return result.isPresent() ? entityToDto(result.get()) : null;
+        Object result = repository.getChunuByCno(cno);
+        Object[] arr = (Object[]) result;
+
+        return entityToDto((Chunu) arr[0], (Long) arr[1]);
     }
 
     @Override
-    public PageResultDTO<ChunuDTO, Chunu> getList(PageRequestDTO requestDTO) {
-        Pageable pageable = requestDTO.getPageable(Sort.by("cno").descending());
-        BooleanBuilder booleanBuilder = getSearch(requestDTO); // 검색 조건 처리
-        Page<Chunu> result = repository.findAll(booleanBuilder, pageable); // Querydsl 사용
-        Function<Chunu, ChunuDTO> fn = (entity -> entityToDto(entity));
-
+    public PageResultDTO<ChunuDTO, Object[]> getList(PageRequestDTO requestDTO) {
+        log.info(requestDTO);
+        Function<Object[], ChunuDTO> fn = (en -> entityToDto((Chunu) en[0], (Long) en[1]));
+//        Page<Object[]> result = repository.getChunuWithReplyCount(requestDTO.getPageable(Sort.by("cno").descending()));
+        Page<Object[]> result = repository.searchPage(
+                requestDTO.getType(),
+                requestDTO.getKeyword(),
+                requestDTO.getPageable(Sort.by("cno").descending())
+        );
         return new PageResultDTO<>(result, fn);
     }
 }

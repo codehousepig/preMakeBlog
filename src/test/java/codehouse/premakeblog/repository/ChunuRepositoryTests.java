@@ -12,6 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -22,6 +24,42 @@ public class ChunuRepositoryTests {
     private ChunuRepository chunuRepository;
 
     @Test
+    public void testSearchPage(){
+        Pageable pageable = PageRequest.of(0,10, Sort.by("cno").descending().and(Sort.by("title").ascending()));
+        Page<Object[]> result = chunuRepository.searchPage("t", "1", pageable);
+    }
+
+/*    @Test
+    public void search1Test() {
+        chunuRepository.search1();
+    }*/
+
+/*    @Test
+    public void query4Test() {
+        Object result = chunuRepository.getChunuByCno(22L);
+        Object[] arr = (Object[]) result;
+        System.out.println(Arrays.toString(arr));
+    }*/
+
+/*    @Test
+    public void query3Test() {
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("cno").descending());
+        Page<Object[]> result = chunuRepository.getBoardWithReplyCount(pageable);
+        result.get().forEach(i -> {
+            Object[] arr = (Object[]) i;
+            System.out.println(Arrays.toString(arr));
+        });
+    }*/
+
+/*    @Test
+    public void query2Test() {
+        List<Object[]> result = chunuRepository.getChunuwithReply(20L);
+        for (Object[] i : result) {
+            System.out.println(Arrays.toString(i));
+        }
+    }*/
+
+/*    @Test
     public void queryTest() {
         Pageable pageable = PageRequest.of(0, 10, Sort.by("cno").descending());
 
@@ -36,7 +74,7 @@ public class ChunuRepositoryTests {
         result.stream().forEach(i -> {
             System.out.println("i = " + i);
         });
-    }
+    }*/
 
 /*    @Test
     public void updateTest() {

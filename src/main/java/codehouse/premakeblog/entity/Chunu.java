@@ -33,5 +33,4 @@ public class Chunu extends BaseEntity{
     public void changeContent(String content) {
         this.content = content;
     }
-
 }

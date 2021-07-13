@@ -18,4 +18,5 @@ public class ChunuDTO {
     private String content;
     private String writer;
     private LocalDateTime regDate, modDate;
+    private int replycount; // 해당 게시물의 댓글 수
 }

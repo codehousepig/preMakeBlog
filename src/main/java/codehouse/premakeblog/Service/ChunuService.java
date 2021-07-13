@@ -14,7 +14,7 @@ public interface ChunuService {
 
     void modify(ChunuDTO dto);
 
-    PageResultDTO<ChunuDTO, Chunu> getList(PageRequestDTO requestDTO);
+    PageResultDTO<ChunuDTO, Object[]> getList(PageRequestDTO requestDTO);
 
     default Chunu dtoToEntity(ChunuDTO dto) {
         Chunu entity = Chunu.builder()
@@ -27,7 +27,7 @@ public interface ChunuService {
         return entity;
     }
 
-    default ChunuDTO entityToDto(Chunu entity) {
+    default ChunuDTO entityToDto(Chunu entity, Long replycount) {
         ChunuDTO dto = ChunuDTO.builder()
                 .cno(entity.getCno())
                 .title(entity.getTitle())
@@ -35,6 +35,7 @@ public interface ChunuService {
                 .writer(entity.getWriter())
                 .regDate(entity.getRegDate())
                 .modDate(entity.getModDate())
+                .replycount(replycount.intValue()) // long 으로 나오므로 int로 처리.
                 .build();
 
         return dto;
