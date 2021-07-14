@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
@@ -15,6 +16,15 @@ public class ReplyRepositoryTests {
 
     @Autowired
     private ReplyRepository replyRepository;
+
+/*    @Test
+    public void getListTest() {
+        Chunu test = Chunu.builder().cno(11L).build();
+        List<Reply> replyList = replyRepository.getReplyByChunuOrderByRno(test);
+        replyList.forEach(i ->{
+            System.out.println(i);
+        });
+    }*/
 
 /*    @Transactional
     @Test
