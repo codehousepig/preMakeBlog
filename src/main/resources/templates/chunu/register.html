@@ -22,8 +22,25 @@
 					<label >Writer</label>
 					<input type="text" class="form-control" name="writer" placeholder="Enter Writer">
 				</div>
+
+				<!-- 파일 업로드 처리하기 -->
+				<div class="form-group fileForm">
+					<label>Image Files</label>
+					<div class="custom-file">
+						<input type="file" class="custom-file-input files" id="fileInput" multiple>
+						<label class="custom-file-label" data-browse="Browse"></label>
+					</div>
+				</div>
+				<div class="box"></div>
+
 				<button type="submit" class="btn btn-primary">Submit</button>
 			</form>
+
+			<script>
+				$(document).ready(function (e) {
+
+				});
+			</script> <!--document ready-->
 		</th:block>
 	</th:block>
 </body>
