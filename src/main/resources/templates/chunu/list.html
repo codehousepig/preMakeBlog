@@ -42,6 +42,7 @@
 				<tr>
 					<th scope="col">#</th>
 					<th scope="col">Title</th>
+					<th scope="col">AVG Rating</th>
 					<th scope="col">writer</th>
 					<th scope="col">Regdate</th>
 				</tr>
@@ -57,6 +58,7 @@
 						</a>
 					</th>
 					<td> [[${dto.title}]] ------------- [<b th:text="${dto.replycount}"></b>]</td>
+					<td> [[${dto.avg}]]</td>
 					<td> [[${dto.writer}]]</td>
 					<td> [[${#temporals.format(dto.regDate, 'yyyy/MM/dd')}]]</td>
 				</tr>

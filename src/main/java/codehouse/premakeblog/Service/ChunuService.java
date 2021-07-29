@@ -34,7 +34,6 @@ public interface ChunuService {
 
         return entity;
     }*/
-
     default Map<String, Object> dtoToEntity(ChunuDTO chunuDTO) {
         Map<String, Object> entityMap = new HashMap<>();
 
@@ -65,7 +64,7 @@ public interface ChunuService {
         return entityMap;
     }
 
-    default ChunuDTO entityToDto(Chunu entity, Long replycount) {
+/*    default ChunuDTO entityToDto(Chunu entity, Long replycount) {
         ChunuDTO dto = ChunuDTO.builder()
                 .cno(entity.getCno())
                 .title(entity.getTitle())
@@ -75,7 +74,35 @@ public interface ChunuService {
                 .modDate(entity.getModDate())
                 .replycount(replycount.intValue()) // long 으로 나오므로 int로 처리.
                 .build();
-
         return dto;
+    }*/
+    default ChunuDTO entityToDTO(Chunu chunu, List<ChunuImage> chunuImages, Double avg, Long replyCount){
+        ChunuDTO chunuDTO = ChunuDTO.builder()
+                .cno(chunu.getCno())
+                .title(chunu.getTitle())
+                .content(chunu.getContent())
+                .writer(chunu.getWriter())
+                .regDate(chunu.getRegDate())
+                .modDate(chunu.getModDate())
+                .build();
+
+        List<ChunuImageDTO> chunuImageDTOList = chunuImages.stream().map(img -> {
+            if (img == null) {
+                return null;
+            } else {
+                return ChunuImageDTO.builder()
+                        .fileName(img.getFileName())
+                        .folderPath(img.getFolderPath())
+                        .uuid(img.getUuid())
+                        .build();
+            }
+        }).collect(Collectors.toList());
+
+        chunuDTO.setImageDTOList(chunuImageDTOList);
+        chunuDTO.setAvg(avg);
+        chunuDTO.setReplycount(replyCount.intValue());
+
+        return chunuDTO;
     }
+
 }

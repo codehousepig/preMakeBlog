@@ -20,6 +20,8 @@ public class Reply extends BaseEntity {
 
     private String replyer;
 
+    private int grade;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private Chunu chunu; // 연관관계 지정
 }

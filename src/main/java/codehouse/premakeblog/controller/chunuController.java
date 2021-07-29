@@ -42,7 +42,7 @@ public class chunuController {
 
     @PostMapping("/register")
     public String registerPost(ChunuDTO dto, RedirectAttributes redirectAttributes){
-        log.info("dto: Add............." + dto);
+        log.info("Cont_PostRegister; dto: " + dto);
         Long cno = service.register(dto);
         redirectAttributes.addFlashAttribute("msg", cno);
 
@@ -80,4 +80,6 @@ public class chunuController {
         redirectAttributes.addAttribute("keyword", requestDTO.getPage());
         return "redirect:/chunu/read";
     }
+
+
 }

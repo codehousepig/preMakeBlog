@@ -22,6 +22,8 @@ public class ChunuDTO {
     private LocalDateTime regDate, modDate;
     private int replycount; // 해당 게시물의 댓글 수
 
+    private double avg; // 게시물의 평균 평점
+
     @Builder.Default
     private List<ChunuImageDTO> imageDTOList = new ArrayList<>();
 }

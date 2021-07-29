@@ -4,7 +4,9 @@ import codehouse.premakeblog.dto.ChunuDTO;
 import codehouse.premakeblog.dto.PageRequestDTO;
 import codehouse.premakeblog.dto.PageResultDTO;
 import codehouse.premakeblog.entity.Chunu;
+import codehouse.premakeblog.entity.ChunuImage;
 import codehouse.premakeblog.entity.QChunu;
+import codehouse.premakeblog.repository.ChunuImageRepository;
 import codehouse.premakeblog.repository.ChunuRepository;
 import codehouse.premakeblog.repository.ReplyRepository;
 import com.querydsl.core.BooleanBuilder;
@@ -17,8 +19,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 @Service
@@ -28,17 +31,25 @@ public class ChunuServiceImpl implements ChunuService{
 
     private final ChunuRepository repository; // 테스트 후에 추가
     private final ReplyRepository replyRepository;
+    private final ChunuImageRepository imageRepository;
 
+    @Transactional
     @Override
     public Long register(ChunuDTO dto) {
-        log.info("input dto.............");
-        log.info(dto);
+        log.info("input dto: " + dto);
 
-        Chunu entity = dtoToEntity(dto);
-        log.info(entity);
+//        Chunu entity = dtoToEntity(dto);
+//        repository.save(entity); // 테스트 후에 추가
+        Map<String, Object> entityMap = dtoToEntity(dto);
+        Chunu chunu = (Chunu) entityMap.get("chunu");
+        List<ChunuImage> chunuImageList = (List<ChunuImage>) entityMap.get("imgList");
 
-        repository.save(entity); // 테스트 후에 추가
-        return entity.getCno(); // 테스트 후에 추가
+        repository.save(chunu);
+        chunuImageList.forEach( img -> {
+            imageRepository.save(img);
+        });
+
+        return chunu.getCno(); // 테스트 후에 추가
     }
 
     @Transactional // 트랜잭션 추가
@@ -93,21 +104,32 @@ public class ChunuServiceImpl implements ChunuService{
     @Override
     public ChunuDTO read(Long cno) {
         Object result = repository.getChunuByCno(cno);
-        Object[] arr = (Object[]) result;
+        Object[] en = (Object[]) result;
 
-        return entityToDto((Chunu) arr[0], (Long) arr[1]);
+        return entityToDTO((Chunu) en[0],
+                (List<ChunuImage>)(Arrays.asList((ChunuImage)en[2])),
+                (Double)en[3],
+                (Long)en[4]);
     }
 
     @Override
-    public PageResultDTO<ChunuDTO, Object[]> getList(PageRequestDTO requestDTO) {
-        log.info(requestDTO);
-        Function<Object[], ChunuDTO> fn = (en -> entityToDto((Chunu) en[0], (Long) en[1]));
-//        Page<Object[]> result = repository.getChunuWithReplyCount(requestDTO.getPageable(Sort.by("cno").descending()));
+    public PageResultDTO<ChunuDTO, Object[]> getList(PageRequestDTO pageRequestDTO) {
+        log.info("CSImpl_PageResultDTO; " + pageRequestDTO);
+
         Page<Object[]> result = repository.searchPage(
-                requestDTO.getType(),
-                requestDTO.getKeyword(),
-                requestDTO.getPageable(Sort.by("cno").descending())
+                pageRequestDTO.getType(),
+                pageRequestDTO.getKeyword(),
+                pageRequestDTO.getPageable(Sort.by("cno").descending())
         );
+
+        System.out.println("result" + result);
+        Function<Object[], ChunuDTO> fn = (en -> entityToDTO(
+                (Chunu) en[0],
+                (List<ChunuImage>)(Arrays.asList((ChunuImage)en[1])),
+                (Double)en[2],
+                (Long)en[3])
+        );
+
         return new PageResultDTO<>(result, fn);
     }
 }

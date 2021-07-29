@@ -2,6 +2,7 @@ package codehouse.premakeblog.repository.search;
 
 import codehouse.premakeblog.entity.Chunu;
 import codehouse.premakeblog.entity.QChunu;
+import codehouse.premakeblog.entity.QChunuImage;
 import codehouse.premakeblog.entity.QReply;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -33,11 +34,13 @@ public class SearchChunuRepositoryImpl extends QuerydslRepositorySupport impleme
 
         QChunu qChunu = QChunu.chunu;
         QReply qReply = QReply.reply;
+        QChunuImage qImage = QChunuImage.chunuImage; // 첨부 추가
 
         JPQLQuery<Chunu> jpqlQuery = from(qChunu);
+        jpqlQuery.leftJoin(qImage).on(qImage.chunu.eq(qChunu)); // 첨부 추가
         jpqlQuery.leftJoin(qReply).on(qReply.chunu.eq(qChunu));
 
-        JPQLQuery<Tuple> tuple =  jpqlQuery.select(qChunu, qReply.count());
+        JPQLQuery<Tuple> tuple =  jpqlQuery.select(qChunu, qImage, qReply.grade.avg().coalesce(0.0), qReply.count()); // 첨부 추가
 
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         BooleanExpression expression = qChunu.cno.gt(0L); // cno > 0 조건만 생성
@@ -66,6 +69,7 @@ public class SearchChunuRepositoryImpl extends QuerydslRepositorySupport impleme
 
         // order by
         Sort sort = pageable.getSort();
+
         // tuple.orderBy(board.bno.desc()); // 직접 코드로 처리하면
         sort.stream().forEach(order -> {
             Order direction = order.isAscending() ? Order.ASC : Order.DESC;
