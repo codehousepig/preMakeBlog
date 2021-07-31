@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class ReplyDTO {
     private Long rno;
     private String text;
+    private int grade;
     private String replyer;
     private Long cno; // 게시글 번호
     private LocalDateTime regDate, modDate;

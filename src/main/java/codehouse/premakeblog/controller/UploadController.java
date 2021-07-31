@@ -43,6 +43,7 @@ public class UploadController {
             // 이미지 파일만 업로드 가능
             if (uploadFile.getContentType().startsWith("image") == false) {
                 log.warn("this file is not image type");
+
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
             }
 
@@ -99,7 +100,7 @@ public class UploadController {
     }
 
     @GetMapping("/display")
-    public ResponseEntity<byte[]> getFile(String fileName) {
+    public ResponseEntity<byte[]> getFile(String fileName, String size) {
 
         ResponseEntity<byte[]> result = null;
 
@@ -109,6 +110,12 @@ public class UploadController {
             log.info("fileName: " + srcFileName);
 
             File file = new File(uploadPath +File.separator+ srcFileName);
+
+            System.out.println("size: " + size);
+            // 원본 이미지 조회 추가
+            if (size != null && size.equals("1")) {
+                file = new File(file.getParent(), file.getName().substring(2));
+            }
 
             log.info("file: " + file);
 

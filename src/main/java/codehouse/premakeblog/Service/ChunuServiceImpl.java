@@ -19,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -103,13 +104,22 @@ public class ChunuServiceImpl implements ChunuService{
 
     @Override
     public ChunuDTO read(Long cno) {
-        Object result = repository.getChunuByCno(cno);
-        Object[] en = (Object[]) result;
 
-        return entityToDTO((Chunu) en[0],
-                (List<ChunuImage>)(Arrays.asList((ChunuImage)en[2])),
-                (Double)en[3],
-                (Long)en[4]);
+        List<Object[]> result = repository.getCno(cno);
+
+        Chunu chunu = (Chunu) result.get(0)[0]; // Chunu 엔티티는 가장 앞에 존재 - 모든 값의 Row 가 동일한 값
+
+        List<ChunuImage> chunuImageList = new ArrayList<>();
+
+        result.forEach(en -> {
+            ChunuImage chunuImage = (ChunuImage) en[1];
+            chunuImageList.add(chunuImage);
+        });
+
+        Double avg = (Double) result.get(0)[2]; // 평균 평점 - 모든 값의 Row 가 동일한 값
+        Long replyCnt = (Long) result.get(0)[3]; // 리뷰 개수 - 모든 값의 Row 가 동일한 값
+
+        return entityToDTO(chunu, chunuImageList, avg, replyCnt);
     }
 
     @Override

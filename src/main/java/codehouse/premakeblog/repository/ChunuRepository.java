@@ -30,4 +30,12 @@ public interface ChunuRepository extends JpaRepository<Chunu, Long>, QuerydslPre
             "on r.chunu = c " +
             "where c.cno = :cno")
     Object getChunuByCno(@Param("cno") Long cno);
+
+    @Query("select c, ci, avg(coalesce(r.grade, 0)), count(r) " +
+            "from Chunu c " +
+            "left outer join ChunuImage ci on ci.chunu = c " +
+            "left outer join Reply r on r.chunu = c " +
+            "where c.cno = :cno " +
+            "group by ci")
+    List<Object[]> getCno(Long cno);
 }

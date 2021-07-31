@@ -24,4 +24,6 @@ public class Reply extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Chunu chunu; // 연관관계 지정
+
+
 }

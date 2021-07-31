@@ -54,6 +54,7 @@ public class chunuController {
     public void read(Long cno, @ModelAttribute("requestDTO") PageRequestDTO requestDTO, Model model){
         log.info("cno: Read..." + cno);
         ChunuDTO dto = service.read(cno);
+        log.info("read dto: "+ dto);
         model.addAttribute("dto", dto);
     }
 

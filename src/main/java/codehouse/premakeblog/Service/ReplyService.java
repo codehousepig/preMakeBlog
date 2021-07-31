@@ -25,6 +25,7 @@ public interface ReplyService {
                 .rno(replyDTO.getRno())
                 .text(replyDTO.getText())
                 .replyer(replyDTO.getReplyer())
+                .grade(replyDTO.getGrade())
                 .chunu(chunu)
                 .build();
 
@@ -36,6 +37,7 @@ public interface ReplyService {
         ReplyDTO dto = ReplyDTO.builder()
                 .rno(reply.getRno())
                 .text(reply.getText())
+                .grade(reply.getGrade())
                 .replyer(reply.getReplyer())
                 .regDate(reply.getRegDate())
                 .modDate(reply.getModDate())

@@ -20,6 +20,11 @@
 			<label >Content</label>
 			<textarea class="form-control" rows="5" name="content" readonly> [[ ${dto.content} ]] </textarea>
 		</div>
+		<!-- 평균 별점 추가 -->
+		<div class="form-group">
+			<label >Avg</label>
+			<input type="text" class="form-control" name="title" th:value="${dto.avg}" readonly>
+		</div>
 		<div class="form-group">
 			<label >Writer</label>
 			<input type="text" class="form-control" name="writer" th:value="${dto.writer}" readonly>
@@ -28,6 +33,42 @@
 			<label >ModDate</label>
 			<input type="text" class="form-control" name="modDate" th:value="${#temporals.format(dto.modDate, 'yyyy/MM/dd HH:mm:ss')}" readonly>
 		</div>
+
+		<!-- 첨부 파일 추가 -->
+		<div class="uploadResult">
+			<ul>
+				<li th:each="img: ${dto.imageDTOList}">
+					<div th:if="${img == null}">(첨부 파일이 없습니다)</div>
+					<div th:unless="${img == null}">
+						<img th:if="${img.folderPath != null}" th:src="|/display?fileName=${img.getThumbnailURL()}|"
+							 th:data-file="${img.getThumbnailURL()}">
+					</div>
+				</li>
+			</ul>
+		</div>
+		<style>
+			.uploadResult {
+				width: 100%;
+				background-color: gray;
+				margin-top: 10px;
+			}
+			.uploadResult ul {
+				display: flex;
+				flex-flow: row;
+				justify-content: center;
+				align-items: center;
+				vertical-align: top;
+				overflow: auto;
+			}
+			.uploadResult ul li {
+				list-style: none;
+				padding: 10px;
+				margin-left: 2em;
+			}
+			.uploadResult ul li img {
+				width: 100px;
+			}
+		</style>
 
 		<a th:href="@{/chunu/modify(cno= ${dto.cno}, page = ${requestDTO.page},
 		type=${requestDTO.type}, keyword=${requestDTO.keyword})}">
@@ -50,7 +91,7 @@
 		</div>
 
 		<!-- 댓글 처리를 위한 코드 2-->
-		<div class="modal" tabindex="-1" role="dialog">
+		<div class="replyModal modal" tabindex="-1" role="dialog">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -63,9 +104,15 @@
 
 					<div class="modal-body">
 						<div class="form-group">
+							<label >Text</label>
 							<input class="form-control" type="text" name="replyText" placeholder="Reply Text...">
 						</div>
 						<div class="form-group">
+							<label >Grade <span class="grade"></span></label>
+							<div class="starrr" name="replyGrade"></div>
+						</div>
+						<div class="form-group">
+							<label >Replyer</label>
 							<input class="form-control" type="text" name="replyer" placeholder="Replyer">
 							<input type="hidden" name="rno">
 						</div>
@@ -81,11 +128,46 @@
 			</div>
 		</div>
 
+		<!-- 추가 모달창 2: 이미지 확인 -->
+		<div class="imageModal modal" tabindex="-2" role="dialog">
+			<div class="modal-dialog modal-lg" role="document">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">Picture</h5>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<div class="modal-body">
+
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<!-- javascript -->
+		<script th:src="@{/starrr.js}"></script>
+		<link rel="stylesheet" th:href="@{/css/starrr.css}">
+		<link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.2.0/css/font-awesome.min.css">
 		<script th:inline="javascript">
 			$(document).ready(function () {
 				var cno = [[ ${dto.cno}]];
 				var listGroup = $(".replyList");
+				var grade = 0 // 별점 추가
+
+				$('.starrr').starrr({
+					rating: grade,
+					change: function (e, value) {
+						if (value) {
+							console.log(value);
+							grade = value;
+							console.log(grade);
+						}
+					}
+				});
 
 				function formatTime(str) {
 					var date = new Date(str);
@@ -109,6 +191,7 @@
 							console.log(reply);
 							str += '	<div class="card-body" data-rno="' + reply.rno + '"><b>' + reply.rno + '</b>';
 							str += '	<h5 class="card-title">' + reply.text + '</h5>';
+							str += '    <p class="card-text">평점: ' + reply.grade + '</p>';
 							str += '	<h6 class="card-subtitle mb-2 text-muted">' + reply.replyer + '</h6>';
 							str += '	<p class="card-text">' + formatTime(reply.regDate) + '</p>';
 							str += '	</div>';
@@ -121,12 +204,13 @@
 				}); // end click
 
 				// 모달창
-				var modal = $('.modal');
+				var modal = $('.replyModal');
 				$(".addReply").click(function () {
 					modal.modal('show');
 
 					// 댓글 입력하는 부분 초기화 시키기
 					$('input[name="replyText"]').val('');
+					$('input[name="replyGrade"]').val('');
 					$('input[name="replyer"]').val('');
 
 					$(".modal-footer .btn").hide(); // 모달 내의 모든 버튼을 안 보이도록
@@ -137,6 +221,7 @@
 
 					var reply = {
 						cno: cno,
+						grade: grade,
 						text: $('input[name="replyText"]').val(),
 						replyer: $('input[name="replyer"]').val()
 					}
@@ -199,6 +284,7 @@
 					var reply = {
 						rno: rno,
 						cno: cno,
+						grade: grade,
 						text: $('input[name="replyText"]').val(),
 						replyer: $('input[name="replyer"]').val()
 					}
@@ -220,6 +306,16 @@
 							}
 						}
 					});
+				});
+
+				// 원본 이미지 조회 모달창
+				$(".uploadResult img").click(function () {
+					var file = $(this).data('file');
+					console.log(file);
+
+					$('.imageModal .modal-body').html("<img style='width:100%' src='/display?fileName="+file+"&size=1' >")
+
+					$(".imageModal").modal("show");
 				});
 
 			}) //end ready
